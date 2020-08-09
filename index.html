@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Machine Learning</title>
+  <script src='/socket.io/socket.io.js'></script>
+  <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js'></script>
+  <script>
+    $(function () {
+      const socket = io()
+
+      socket.on('scatterplot data', ({ labelX, labelY, values }) => {
+
+        console.log('scatterplot data')
+        console.log(values)
+
+        tfvis.render.scatterplot(
+          { name: `${labelX} x ${labelY}` },
+          { values },
+          {
+            xLabel: labelX,
+            yLabel: labelY,
+            height: 300,
+          }
+        )
+
+      })
+
+      socket.on('model summary', model => {
+
+        console.log('model summary')
+        console.log(model)
+
+        tfvis.show.modelSummary({ name: 'Model Summary' }, model)
+
+      })
+
+      socket.on('scatterplot results', results => {
+
+        tfvis.render.scatterplot(
+          { name: 'Model Predictions vs Original Data' },
+          { values: results, series: ['original', 'predicted'] },
+          {
+            xLabel: 'Horsepower',
+            yLabel: 'MPG',
+            height: 300,
+          },
+        )
+
+      })
+
+    })
+  </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
