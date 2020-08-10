@@ -7,6 +7,8 @@ const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 
+app.use(express.static('public'))
+
 const ML = require('./ML')
 
 const ml = new ML()
@@ -14,13 +16,13 @@ const ml = new ML()
 const main = async () => {
 
   // body
-  
+
   await ml.GetData()
   //console.log(ml.data)
-  
+
   ml.CreateModel()
   //console.log(ml.model)
-  
+
   ml.ConvertToTensor()
   //console.log(ml.tensorData)
 
@@ -40,7 +42,6 @@ const main = async () => {
     console.log(`client connected (${socket.request.connection.remoteAddress})`)
 
     const values = ml.data.map(({ horsepower, mpg }) => ({ x: horsepower, y: mpg }))
-
     /* socket.emit('scatterplot data', {
       labelX: 'Horsepower',
       labelY: 'Miles per Gallon',
@@ -49,10 +50,11 @@ const main = async () => {
 
     //socket.emit('model summary', ml.model)
 
-    socket.emit('scatterplot results', results)
+    const loss = Math.floor(ml.loss * 10000) / 100
+    socket.emit('scatterplot results', { results: results, accuracy: 100 - loss })
 
     socket.on('disconnect', () => {
-      console.log(`client disconnected (${socket.request.connection.remoteAddress})`)
+      console.log(`${Date.now()}client disconnected (${socket.request.connection.remoteAddress})`)
     })
 
   })

@@ -73,14 +73,17 @@ module.exports = class ML {
     })
 
     const batchSize = 64
-    const epochs = 1000
+    const epochs = 310
 
     return await this.model.fit(inputs, labels, {
       batchSize,
       epochs,
       shuffle: true,
       callbacks: {
-        onEpochEnd: (epoch, log) => console.log(`Epoch ${epoch}: loss = ${log.loss}`),
+        onEpochEnd: (epoch, log) => {
+          this.loss = log.loss
+          console.log(`Epoch ${epoch}: loss = ${log.loss}`)
+        },
       },
     })
   }
