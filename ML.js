@@ -6,8 +6,8 @@ module.exports = class ML {
   // methods
 
   async GetData() {
-    const carsDataReq = await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json');
-    const carsData = await carsDataReq.json();
+    const carsDataReq = await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json')
+    const carsData = await carsDataReq.json()
     const cleaned = carsData.map(car => ({
       mpg: car.Miles_per_Gallon,
       horsepower: car.Horsepower,
@@ -18,11 +18,11 @@ module.exports = class ML {
   }
 
   CreateModel() {
-    const model = tf.sequential();
+    const model = tf.sequential()
     model.add(tf.layers.dense({ inputShape: [1], units: 1, useBias: true }))
     model.add(tf.layers.dense({ units: 1, useBias: true }))
 
-    this.model = model;
+    this.model = model
   }
 
   ConvertToTensor() {
@@ -67,13 +67,13 @@ module.exports = class ML {
 
     // Prepare the model for training
     this.model.compile({
-      optimizer: tf.train.adam(),
+      optimizer: 'sgd',
       loss: tf.losses.meanSquaredError,
       metrics: ['mse'],
     })
 
-    const batchSize = 32
-    const epochs = 50
+    const batchSize = 64
+    const epochs = 1000
 
     return await this.model.fit(inputs, labels, {
       batchSize,

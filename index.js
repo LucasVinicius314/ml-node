@@ -39,13 +39,13 @@ const main = async () => {
 
     console.log(`client connected (${socket.request.connection.remoteAddress})`)
 
-    const values1 = ml.data.map(({ horsepower, mpg }) => ({ x: horsepower, y: mpg }))
+    const values = ml.data.map(({ horsepower, mpg }) => ({ x: horsepower, y: mpg }))
 
-    socket.emit('scatterplot data', {
+    /* socket.emit('scatterplot data', {
       labelX: 'Horsepower',
       labelY: 'Miles per Gallon',
-      values: values1,
-    })
+      values: values,
+    }) */
 
     //socket.emit('model summary', ml.model)
 
