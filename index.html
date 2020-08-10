@@ -42,6 +42,9 @@
 
       socket.on('scatterplot results', ({ results, accuracy, epochs }) => {
 
+        $('#state').toggleClass('text-danger', false)
+        $('#state').toggleClass('text-success', true)
+        $('#state').text('Ready')
         $('#accuracy').text(`Accuracy: ${accuracy}%`)
         $('#epochs').text(`Epochs: ${epochs}`)
 
@@ -63,6 +66,7 @@
 
 <body class='p-3'>
   <h1>Linear Model</h1>
+  <h4 id='state' class='text-danger'><i>Generating model...</i></h4>
   <hr>
   <h3 id='accuracy'></h3>
   <h3 id='epochs'></h3>
