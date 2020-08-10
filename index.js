@@ -47,16 +47,24 @@ const main = async () => {
     console.log(`${util.now()} client connected (${socket.request.connection.remoteAddress})`)
 
     const values = ml.data.map(({ horsepower, mpg }) => ({ x: horsepower, y: mpg }))
-    /* socket.emit('scatterplot data', {
+    socket.emit('data graph', {
       labelX: 'Horsepower',
       labelY: 'Miles per Gallon',
-      values: values,
-    }) */
+      values,
+    })
 
     //socket.emit('model summary', ml.model)
 
     const loss = Math.floor(ml.loss * 10000) / 100
-    socket.emit('scatterplot results', { results: results, accuracy: 100 - loss, epochs: ml.epochs })
+    socket.emit('results graph',
+      {
+        results: results,
+        accuracy: 100 - loss,
+        epochs: ml.epochs,
+        dataSetLength: ml.data.length,
+      })
+
+    socket.emit('losses graph', ml.losses)
 
     socket.on('disconnect', () => {
       console.log(`${util.now()} client disconnected (${socket.request.connection.remoteAddress})`)

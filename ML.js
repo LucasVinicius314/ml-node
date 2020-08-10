@@ -3,6 +3,10 @@ const fetch = require('node-fetch')
 
 module.exports = class ML {
 
+  // properties
+
+  losses = []
+
   // methods
 
   async GetData() {
@@ -79,6 +83,7 @@ module.exports = class ML {
       callbacks: {
         onEpochEnd: (epoch, log) => {
           this.loss = log.loss
+          this.losses.push(log.loss)
           console.log(`Epoch ${epoch}: loss = ${log.loss}`)
         },
       },
@@ -117,25 +122,6 @@ module.exports = class ML {
     }))
 
     return [originalPoints, predictedPoints]
-  }
-
-  async _BakeModel() {
-    const model = tf.sequential()
-    model.add(tf.layers.dense({ units: 100, activation: 'relu', inputShape: [10] }))
-    model.add(tf.layers.dense({ units: 1, activation: 'linear' }))
-    model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' })
-
-    const xs = tf.randomNormal([100, 10])
-    const ys = tf.randomNormal([100, 1])
-
-    this.model = model
-
-    model.fit(xs, ys, {
-      epochs: 100,
-      callbacks: {
-        onEpochEnd: (epoch, log) => console.log(`Epoch ${epoch}: loss = ${log.loss}`)
-      }
-    })
   }
 
 }

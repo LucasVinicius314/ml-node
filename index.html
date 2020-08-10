@@ -14,14 +14,17 @@
     $(function () {
       const socket = io()
 
-      socket.on('scatterplot data', ({ labelX, labelY, values }) => {
-
-        console.log('scatterplot data')
-        console.log(values)
+      socket.on('data graph', ({ labelX, labelY, values }) => {
 
         tfvis.render.scatterplot(
-          { name: `${labelX} x ${labelY}` },
-          { values },
+          {
+            name: `${labelX} x ${labelY}`,
+            tab: 'Data',
+          },
+          {
+            values,
+            series: ['Item'],
+          },
           {
             xLabel: labelX,
             yLabel: labelY,
@@ -33,28 +36,59 @@
 
       socket.on('model summary', model => {
 
-        console.log('model summary')
-        console.log(model)
-
-        tfvis.show.modelSummary({ name: 'Model Summary' }, model)
+        tfvis.show.modelSummary(
+          {
+            name: 'Model Summary',
+          },
+          model
+        )
 
       })
 
-      socket.on('scatterplot results', ({ results, accuracy, epochs }) => {
+      socket.on('results graph', ({ results, accuracy, epochs, dataSetLength }) => {
 
         $('#state').toggleClass('text-danger', false)
         $('#state').toggleClass('text-success', true)
         $('#state').text('Ready')
         $('#accuracy').text(`Accuracy: ${accuracy}%`)
         $('#epochs').text(`Epochs: ${epochs}`)
+        $('#dataSetLength').text(`Dataset Length: ${dataSetLength}`)
 
         tfvis.render.scatterplot(
-          { name: 'Model Predictions vs Original Data' },
-          { values: results, series: ['original', 'predicted'] },
+          {
+            name: 'Model Predictions vs Original Data',
+            tab: 'Result',
+          },
+          {
+            values: results,
+            series: ['original', 'predicted'],
+          },
           {
             xLabel: 'Horsepower',
             yLabel: 'Miles per Gallon',
             height: 300,
+          },
+        )
+
+      })
+
+      socket.on('losses graph', data => {
+
+        data = data.map((y, x) => ({ x, y }))
+
+        tfvis.render.linechart(
+          {
+            name: 'Loss Through Time',
+            tab: 'Loss'
+          },
+          {
+            values: [data],
+            series: ['Loss'],
+          },
+          {
+            zoomToFit: true,
+            xLabel: 'Epochs',
+            yLabel: 'Loss',
           },
         )
 
@@ -65,11 +99,12 @@
 </head>
 
 <body class='p-3'>
-  <h1>Linear Model</h1>
-  <h4 id='state' class='text-danger'><i>Generating model...</i></h4>
+  <h1>Linear Regression</h1>
+  <h4 id='state' class='text-danger'><i>Training model...</i></h4>
   <hr>
   <h3 id='accuracy'></h3>
   <h3 id='epochs'></h3>
+  <h3 id='dataSetLength'></h3>
 </body>
 
 </html>

@@ -1,0 +1,3 @@
+- add total elapsed time for model training
+- rename model creation to training
+- add controls for user on interface
