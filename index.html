@@ -40,9 +40,10 @@
 
       })
 
-      socket.on('scatterplot results', ({ results, accuracy }) => {
+      socket.on('scatterplot results', ({ results, accuracy, epochs }) => {
 
         $('#accuracy').text(`Accuracy: ${accuracy}%`)
+        $('#epochs').text(`Epochs: ${epochs}`)
 
         tfvis.render.scatterplot(
           { name: 'Model Predictions vs Original Data' },
@@ -61,7 +62,10 @@
 </head>
 
 <body class='p-3'>
-  <h1 id='accuracy'></h1>
+  <h1>Linear Model</h1>
+  <hr>
+  <h3 id='accuracy'></h3>
+  <h3 id='epochs'></h3>
 </body>
 
 </html>

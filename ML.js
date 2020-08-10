@@ -67,17 +67,14 @@ module.exports = class ML {
 
     // Prepare the model for training
     this.model.compile({
-      optimizer: 'sgd',
+      optimizer: this.optimizer,
       loss: tf.losses.meanSquaredError,
       metrics: ['mse'],
     })
 
-    const batchSize = 64
-    const epochs = 310
-
     return await this.model.fit(inputs, labels, {
-      batchSize,
-      epochs,
+      batchSize: this.batchSize,
+      epochs: this.epochs,
       shuffle: true,
       callbacks: {
         onEpochEnd: (epoch, log) => {
@@ -122,7 +119,7 @@ module.exports = class ML {
     return [originalPoints, predictedPoints]
   }
 
-  async BakeModel() {
+  async _BakeModel() {
     const model = tf.sequential()
     model.add(tf.layers.dense({ units: 100, activation: 'relu', inputShape: [10] }))
     model.add(tf.layers.dense({ units: 1, activation: 'linear' }))

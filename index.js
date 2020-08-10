@@ -10,8 +10,13 @@ const io = require('socket.io')(http)
 app.use(express.static('public'))
 
 const ML = require('./ML')
+const util = require('./util')
 
 const ml = new ML()
+
+ml.optimizer = 'sgd'
+ml.batchSize = 64
+ml.epochs = 310
 
 const main = async () => {
 
@@ -39,7 +44,7 @@ const main = async () => {
 
   io.on('connection', async socket => {
 
-    console.log(`client connected (${socket.request.connection.remoteAddress})`)
+    console.log(`${util.now()} client connected (${socket.request.connection.remoteAddress})`)
 
     const values = ml.data.map(({ horsepower, mpg }) => ({ x: horsepower, y: mpg }))
     /* socket.emit('scatterplot data', {
@@ -51,10 +56,10 @@ const main = async () => {
     //socket.emit('model summary', ml.model)
 
     const loss = Math.floor(ml.loss * 10000) / 100
-    socket.emit('scatterplot results', { results: results, accuracy: 100 - loss })
+    socket.emit('scatterplot results', { results: results, accuracy: 100 - loss, epochs: ml.epochs })
 
     socket.on('disconnect', () => {
-      console.log(`${Date.now()}client disconnected (${socket.request.connection.remoteAddress})`)
+      console.log(`${util.now()} client disconnected (${socket.request.connection.remoteAddress})`)
     })
 
   })
